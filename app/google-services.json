@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "782765350829",
+    "firebase_url": "https://plantmonitor-65e16.firebaseio.com",
+    "project_id": "plantmonitor-65e16",
+    "storage_bucket": "plantmonitor-65e16.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:782765350829:android:9c2cc40736e63ec6644b24",
+        "android_client_info": {
+          "package_name": "com.app.plantmonitor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "782765350829-g5aq4ldqs9bq240mknaqktv9krie5h4o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.plantmonitor",
+            "certificate_hash": "7cbff72f7bd198064747a7c8f1ca9dc8726d2e71"
+          }
+        },
+        {
+          "client_id": "782765350829-sm4kv0jfeaodrc6qrc96nc3g3pf2gun7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0ILsavzwfDsTm6oVgFWwZadEsRoMzHTY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "782765350829-sm4kv0jfeaodrc6qrc96nc3g3pf2gun7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

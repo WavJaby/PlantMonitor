@@ -18,11 +18,7 @@ public class FirebaseHelper {
     public interface DataStatus {
         void DataIsLoaded(Integer mode, List<List<Entry>> data);
 
-        void DataIsInserted();
-
-        void DataIsUpdateed();
-
-        void DataIsDeleted();
+        void WateringState(String state);
     }
 
     public FirebaseHelper(String path) {
@@ -30,8 +26,8 @@ public class FirebaseHelper {
         mReferenceData = mDatabase.getReference(path);
     }
 
-    public void readData(final DataStatus dataStatus) {
-        mReferenceData.addValueEventListener(new ValueEventListener() {
+    public void dataChangeListener(final DataStatus dataStatus) {
+        mReferenceData.child("sensor").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Entry> soilMoistureValue = new ArrayList<>();
@@ -56,9 +52,9 @@ public class FirebaseHelper {
                 }
                 List<List<Entry>> data = new ArrayList<>();
                 data.add(soilMoistureValue);
-                data.add(humidityValue);
                 data.add(lightSensorValue);
                 data.add(temperatureValue);
+                data.add(humidityValue);
                 dataStatus.DataIsLoaded(0, data);
             }
 
@@ -69,31 +65,49 @@ public class FirebaseHelper {
         });
     }
 
-    public void addData(Map<String, Integer> data, final DataStatus dataStatus) {
-        String key = mReferenceData.push().getKey();
-        mReferenceData.child(key).setValue(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+    public void WateringStateChangeListener(final DataStatus dataStatus) {
+        mReferenceData.child("wateringState").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onSuccess(Void aVoid) {
-                dataStatus.DataIsInserted();
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                dataStatus.WateringState(dataSnapshot.getValue().toString());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }
 
-    public void updateData(String key, Map<String, Integer> data, final DataStatus dataStatus) {
-        mReferenceData.child(key).setValue(data).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                dataStatus.DataIsUpdateed();
-            }
-        });
+    public void watering(Boolean state) {
+        mReferenceData.child("watering").setValue(state);
     }
 
-    public void deleteData(String key, final DataStatus dataStatus) {
-        mReferenceData.child(key).setValue(null).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                dataStatus.DataIsDeleted();
-            }
-        });
-    }
+//    public void addData(Map<String, Integer> data, final DataStatus dataStatus) {
+//        String key = mReferenceData.push().getKey();
+//        mReferenceData.child(key).setValue(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+//            @Override
+//            public void onSuccess(Void aVoid) {
+//                dataStatus.DataIsInserted();
+//            }
+//        });
+//    }
+//
+//    public void updateData(String key, Map<String, Integer> data, final DataStatus dataStatus) {
+//        mReferenceData.child(key).setValue(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+//            @Override
+//            public void onSuccess(Void aVoid) {
+//                dataStatus.DataIsUpdateed();
+//            }
+//        });
+//    }
+//
+//    public void deleteData(String key, final DataStatus dataStatus) {
+//        mReferenceData.child(key).setValue(null).addOnSuccessListener(new OnSuccessListener<Void>() {
+//            @Override
+//            public void onSuccess(Void aVoid) {
+//                dataStatus.DataIsDeleted();
+//            }
+//        });
+//    }
 }

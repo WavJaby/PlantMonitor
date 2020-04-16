@@ -1,25 +1,27 @@
 <resources>
     <string name="app_name">PlantMonitor</string>
 
+    <string name="str_watering">Watering</string>
+    <string name="str_view_mode">View mode</string>
+    <string name="str_sending">Sending…</string>
+
+    <string name="str_soil_moisture">Soil moisture</string>
+    <string name="str_light_level">Light level</string>
+    <string name="str_temperature">Temperature</string>
+    <string name="str_humidity">Humidity</string>
+
     <string-array name="list_chart_mode">
         <item>all</item>
-        <item>Soil moisture</item>
-        <item>LightSensor</item>
-        <item>Temperature</item>
-        <item>Humidity</item>
+        <item>@string/str_soil_moisture</item>
+        <item>@string/str_light_level</item>
+        <item>@string/str_temperature</item>
+        <item>@string/str_humidity</item>
     </string-array>
 
     <string name="deviceID_pref">Device ID</string>
     <string name="deviceID_summary">Enter your device ID here</string>
 
-    <string name="line_chart_view_pref">Line chart view</string>
-    <string name="line_chart_view_summary">The view mode for line chart</string>
-    <string-array name="line_chart_view_entries">
-        <item>All</item>
-        <item>Soil moisture</item>
-        <item>Light</item>
-        <item>Temperature</item>
-        <item>Humidity</item>
-    </string-array>
+    <string name="data_upload_delay_pref">Data upload delay</string>
+    <string name="data_upload_delay_summary">The device upload data to firebase delay time</string>
 
 </resources>

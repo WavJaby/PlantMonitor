@@ -1,17 +1,17 @@
 package com.app.plantmonitor;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +31,12 @@ public class MPAndroidChart extends AppCompatActivity implements FirebaseHelper.
 
     ArrayList<ILineDataSet> ilineDataSets = new ArrayList<>();
 
+    List<List<Entry>> sensorData = new ArrayList<>();
+
+    private boolean status;
+    private Button button;
+    private Spinner showMode;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,16 +49,84 @@ public class MPAndroidChart extends AppCompatActivity implements FirebaseHelper.
         String deviceID = prefs.getString("pref_device_id", "");
         System.out.println(deviceID);
 
-        FirebaseHelper light = new FirebaseHelper(deviceID + "/sensor");
-        light.readData(this);
+        final FirebaseHelper firebase = new FirebaseHelper(deviceID);
+        firebase.dataChangeListener(this);
+        firebase.WateringStateChangeListener(this);
+
+        button = findViewById(R.id.watering_button);//澆水按鈕
+        button.setText(String.valueOf(status));
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                status = !status;
+                button.setText(getText(R.string.str_sending));
+                firebase.watering(status);
+            }
+        });
+
+        showMode = findViewById(R.id.show_mode);
+        showMode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (!sensorData.isEmpty()) {
+                    eraseChart();
+                    switch (position) {
+                        case 1:
+                            showChart(getString(R.string.str_soil_moisture), 0, Color.BLACK);
+                            return;
+                        case 2:
+                            showChart(getString(R.string.str_light_level), 1, Color.CYAN);
+                            return;
+                        case 3:
+                            showChart(getString(R.string.str_temperature), 2, Color.GREEN);
+                            return;
+                        case 4:
+                            showChart(getString(R.string.str_humidity), 3, Color.BLUE);
+                            return;
+                        default:
+                            showChart(getString(R.string.str_soil_moisture), 0, Color.BLACK);
+                            showChart(getString(R.string.str_light_level), 1, Color.CYAN);
+                            showChart(getString(R.string.str_temperature), 2, Color.GREEN);
+                            showChart(getString(R.string.str_humidity), 3, Color.BLUE);
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
     }
 
     @Override
     public void DataIsLoaded(Integer mode, List<List<Entry>> data) {
-        showChart("土壤濕度", 0, Color.BLACK, data);
-        showChart("濕度", 1, Color.BLUE, data);
-        showChart("亮度", 2, Color.CYAN, data);
-        showChart("溫度", 3, Color.GREEN, data);
+        sensorData = data;
+        switch (showMode.getSelectedItemPosition()) {
+            case 1:
+                showChart(getString(R.string.str_soil_moisture), 0, Color.BLACK);
+                return;
+            case 2:
+                showChart(getString(R.string.str_light_level), 1, Color.CYAN);
+                return;
+            case 3:
+                showChart(getString(R.string.str_temperature), 2, Color.GREEN);
+                return;
+            case 4:
+                showChart(getString(R.string.str_humidity), 3, Color.BLUE);
+                return;
+            default:
+                showChart(getString(R.string.str_soil_moisture), 0, Color.BLACK);
+                showChart(getString(R.string.str_light_level), 1, Color.CYAN);
+                showChart(getString(R.string.str_temperature), 2, Color.GREEN);
+                showChart(getString(R.string.str_humidity), 3, Color.BLUE);
+        }
+    }
+
+    @Override
+    public void WateringState(String status) {
+        button.setText(String.valueOf(status));
     }
 
     private void lineChartSetup() {
@@ -70,16 +144,19 @@ public class MPAndroidChart extends AppCompatActivity implements FirebaseHelper.
         xAxis.setValueFormatter(new MyYAxisValueFormatter());//資料format
     }
 
-    private void showChart(String mane, int index, int color, List<List<Entry>> dataValues) {
+    private void eraseChart() {
+        ilineDataSets.clear();
+    }
 
-        LineDataSet lineDataSet = new LineDataSet(dataValues.get(index), mane);//設定線段的 數值,名字
+    private void showChart(String mane, int index, int color) {
+        LineDataSet lineDataSet = new LineDataSet(sensorData.get(index), mane);//設定線段的 數值,名字
         lineDataSet.setColor(color);
         lineDataSet.setCircleColor(color);
 
         try {
             ilineDataSets.set(index, lineDataSet);//設定線段 (這是處存所有線段的地方)
         } catch (Exception e) {
-            ilineDataSets.add(index, lineDataSet);//增加線段 (這是處存所有線段的地方)
+            ilineDataSets.add(lineDataSet);//增加線段 (這是處存所有線段的地方)
         }
 
         LineData lineData = new LineData(ilineDataSets);
@@ -104,20 +181,5 @@ public class MPAndroidChart extends AppCompatActivity implements FirebaseHelper.
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    public void DataIsInserted() {
-
-    }
-
-    @Override
-    public void DataIsUpdateed() {
-
-    }
-
-    @Override
-    public void DataIsDeleted() {
-
     }
 }

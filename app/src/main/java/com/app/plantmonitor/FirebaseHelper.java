@@ -5,11 +5,8 @@ import com.github.mikephil.charting.data.Entry;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.*;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.SimpleFormatter;
 
 public class FirebaseHelper {
     private FirebaseDatabase mDatabase;
@@ -19,6 +16,8 @@ public class FirebaseHelper {
         void DataIsLoaded(Integer mode, List<List<Entry>> data);
 
         void WateringState(String state);
+
+        void DataIsUpdated();
     }
 
     public FirebaseHelper(String path) {
@@ -69,7 +68,8 @@ public class FirebaseHelper {
         mReferenceData.child("wateringState").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                dataStatus.WateringState(dataSnapshot.getValue().toString());
+                if (dataSnapshot.getValue() != null)
+                    dataStatus.WateringState(dataSnapshot.getValue().toString());
             }
 
             @Override
@@ -81,6 +81,15 @@ public class FirebaseHelper {
 
     public void watering(Boolean state) {
         mReferenceData.child("watering").setValue(state);
+    }
+
+    public void setData(String path, int value, final DataStatus dataStatus) {
+        mReferenceData.child(path).setValue(value).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                dataStatus.DataIsUpdated();
+            }
+        });
     }
 
 //    public void addData(Map<String, Integer> data, final DataStatus dataStatus) {

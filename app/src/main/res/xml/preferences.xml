@@ -8,8 +8,9 @@
             android:defaultValue="deviceID"/>
 
     <EditTextPreference
-            android:key="pre_line_chart_view"
+            android:key="pre_update_delay"
             android:title="@string/data_upload_delay_pref"
             android:summary="@string/data_upload_delay_summary"
-            android:defaultValue="60000"/>
+            android:defaultValue="60000"
+            android:inputType="number"/>
 </PreferenceScreen>

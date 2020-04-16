@@ -33,9 +33,12 @@ public class MPAndroidChart extends AppCompatActivity implements FirebaseHelper.
 
     List<List<Entry>> sensorData = new ArrayList<>();
 
-    private boolean status;
+    private boolean status = false;
     private Button button;
     private Spinner showMode;
+
+    private String deviceID;
+    private String updateDelay;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,15 +46,18 @@ public class MPAndroidChart extends AppCompatActivity implements FirebaseHelper.
         setContentView(R.layout.mp_android_chart);
         mpLineChart = findViewById(R.id.chart);//圖表
 
-        lineChartSetup();
-
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String deviceID = prefs.getString("pref_device_id", "");
+        deviceID = prefs.getString("pref_device_id", "");//得到裝置ID
         System.out.println(deviceID);
+
+        lineChartSetup();//設定圖表視窗
 
         final FirebaseHelper firebase = new FirebaseHelper(deviceID);
         firebase.dataChangeListener(this);
         firebase.WateringStateChangeListener(this);
+
+        updateDelay = prefs.getString("pre_update_delay", "60");
+        firebase.setData("sendDataDelay", Integer.parseInt(updateDelay) * 1000, this);
 
         button = findViewById(R.id.watering_button);//澆水按鈕
         button.setText(String.valueOf(status));
@@ -129,9 +135,14 @@ public class MPAndroidChart extends AppCompatActivity implements FirebaseHelper.
         button.setText(String.valueOf(status));
     }
 
+    @Override
+    public void DataIsUpdated() {
+
+    }
+
     private void lineChartSetup() {
         Description description = new Description();
-        description.setText("監測盒數據");//描述文字
+        description.setText(deviceID + "數據");//描述文字
         description.setTextSize(12);
         mpLineChart.setDescription(description);//設定圖表描述
 

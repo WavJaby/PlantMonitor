@@ -13,9 +13,9 @@ public class MyYAxisValueFormatter extends ValueFormatter {
     @Override
     @SuppressLint("SimpleDateFormat")
     public String getFormattedValue(float value) {
-        SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat outputFormat = new SimpleDateFormat("dd HH:mm:ss");
         Date date = new Date((long) value);
 
-        return outputFormat.format(date);
+        return "4/" + outputFormat.format(date);
     }
 }

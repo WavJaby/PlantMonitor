@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+            android:key="pref_device_id"
+            android:title="@string/deviceID_pref"
+            android:summary="@string/deviceID_summary"
+            android:defaultValue="IOTplantBox123"/>
+
+    <ListPreference
+            android:key="pre_line_chart_view"
+            android:title="@string/line_chart_view_pref"
+            android:summary="@string/line_chart_view_summary"
+            android:entries="@array/line_chart_view_entries"
+            android:entryValues="@array/line_chart_view_entries"
+            android:defaultValue="All"/>
+</PreferenceScreen>

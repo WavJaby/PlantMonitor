@@ -30,7 +30,7 @@ public class FirebaseHelper {
         mReferenceData = mDatabase.getReference(path);
     }
 
-    public void readData(final String date, final DataStatus dataStatus) {
+    public void readData(final DataStatus dataStatus) {
         mReferenceData.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -38,9 +38,7 @@ public class FirebaseHelper {
                 List<Entry> humidityValue = new ArrayList<>();
                 List<Entry> lightSensorValue = new ArrayList<>();
                 List<Entry> temperatureValue = new ArrayList<>();
-//                SimpleDateFormat dateFmt = new SimpleDateFormat("yyyyMMddHHmmss");
                 SimpleDateFormat dateFmt = new SimpleDateFormat("ddHHmmss");
-//                SimpleDateFormat Fmt = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                 for (DataSnapshot keyDay : dataSnapshot.getChildren()) {//天
                     for (DataSnapshot keyTime : keyDay.getChildren()) {//時間
                         long dataValue = 0;
@@ -56,7 +54,6 @@ public class FirebaseHelper {
                         temperatureValue.add(new Entry(dataValue, keyTime.getValue(DataObject.class).getTemperature()));
                     }
                 }
-                List<String> a= new ArrayList<>();
                 List<List<Entry>> data = new ArrayList<>();
                 data.add(soilMoistureValue);
                 data.add(humidityValue);
